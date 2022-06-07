@@ -1,5 +1,5 @@
+import axios from 'axios';
 import React from 'react';
-import { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import './App.css';
 
@@ -13,8 +13,13 @@ const divStyle = {
 function App() {
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data) => { 
+  const onSubmit = (data) => {
     console.log(data);
+    axios.post("https://3jgliispfg.execute-api.us-east-1.amazonaws.com/dev/matches", { data })
+      .then((response) => {
+        console.log(response);
+        console.log(response.data);
+      });
   };
 
   return (
