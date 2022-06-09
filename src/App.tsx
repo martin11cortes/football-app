@@ -2,6 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import './App.css';
+import Matches from './components/Matches';
 
 const divStyle = {
   display: "flex",
@@ -23,20 +24,23 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Create match</h1>
-      <form onSubmit={handleSubmit(onSubmit)} style={divStyle}>
-        <input type="date" placeholder="Date" {...register("date")} />
-        <input type="text" placeholder="field" {...register("field")} />
-        <select {...register("matchType")}>
-          <option value="">Type</option>
-          <option value="5">5</option>
-          <option value="8">8</option>
-          <option value="11">11</option>
-        </select>
-        <button type="submit">Create</button>
-      </form>
-    </div>
+    <>
+      <div className="App">
+        <h1>Create match</h1>
+        <form onSubmit={handleSubmit(onSubmit)} style={divStyle}>
+          <input type="date" placeholder="Date" {...register("date")} />
+          <input type="text" placeholder="field" {...register("field")} />
+          <select {...register("matchType")}>
+            <option value="">Type</option>
+            <option value="5">5</option>
+            <option value="8">8</option>
+            <option value="11">11</option>
+          </select>
+          <button type="submit">Create</button>
+        </form>
+      </div>
+      <Matches />
+    </>
   );
 }
 
