@@ -7,6 +7,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { Autocomplete, Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+import MyAutocomplete from './components/Autocomplete';
 
 const divStyle = {
   display: "flex",
@@ -30,7 +31,7 @@ function App() {
   const [localTeam, setLocalTeam] = React.useState([]);
   const [visitorTeam, setVisitorTeam] = React.useState([]);
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch, formState: { errors } } = useForm({
     defaultValues: {
       name: '',
       when: new Date(),
@@ -64,15 +65,25 @@ function App() {
           <Controller
             name="name"
             control={control}
-            render={({ field }) => <TextField {...field} label="Name" type={"text"} variant="outlined" />}
+            rules={{ required: true }}
+            render={({ field }) =>
+              <TextField
+                {...field}
+                label="Name"
+                type={"text"}
+                helperText="Required"
+                error={!errors?.name}
+                variant="outlined" />
+            }
           />
           <Controller
             name="when"
             control={control}
+            rules={{ required: true }}
             render={({ field }) =>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DateTimePicker
-                  renderInput={(props) => <TextField required variant="outlined" {...props} />}
+                  renderInput={(props) => <TextField variant="outlined" {...props} />}
                   label="When"
                   value={when}
                   onChange={(newValue) => {
@@ -85,13 +96,15 @@ function App() {
           <Controller
             name="where"
             control={control}
-            render={({ field }) => <TextField required label="Where" type={"text"} variant="outlined" {...field} />}
+            rules={{ required: true }}
+            render={({ field }) => <TextField label="Where" type={"text"} variant="outlined" {...field} />}
           />
           <Controller
             name="matchType"
             control={control}
+            rules={{ required: true }}
             render={({ field }) =>
-              <FormControl required fullWidth>
+              <FormControl fullWidth>
                 <InputLabel id="match-type">Match type</InputLabel>
                 <Select
                   labelId="match-type"
@@ -109,6 +122,7 @@ function App() {
           <Controller
             name="localTeam"
             control={control}
+            rules={{ required: true }}
             render={({ field }) =>
               <Autocomplete
                 multiple
@@ -128,7 +142,6 @@ function App() {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    required={localTeam.length === 0}
                     variant="outlined"
                     label="Local Team"
                     placeholder="Players"
@@ -140,32 +153,12 @@ function App() {
           <Controller
             name="visitorTeam"
             control={control}
-            render={({ field }) => <Autocomplete
-              multiple
-              limitTags={5}
-              freeSolo
-              {...field}
-              value={visitorTeam}
-              onChange={(event, newValue) => {
-                setVisitorTeam([...newValue]);
-              }}
-              options={players.map((option) => option["label"])}
-              renderTags={(value: readonly string[], getTagProps) =>
-                value.map((option: string, index: number) => (
-                  <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                ))
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  required
-                  variant="outlined"
-                  label="Visitor Team"
-                  placeholder="Players"
-                />
-              )}
-            />}
+            rules={{ required: true }}
+            render={({ field }) =>
+              <MyAutocomplete field={field} value={visitorTeam} options={players} />
+            }
           />
+          {errors?.visitorTeam && <p>This field is required</p>}
           <Button type="submit" variant="contained">Create</Button>
         </form>
       </div>
