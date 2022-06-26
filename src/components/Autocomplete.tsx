@@ -2,19 +2,15 @@ import { Autocomplete, Chip, TextField } from "@mui/material";
 
 
 const MyAutocomplete = (props) => {
-  const { field, value, options } = props;
+  const { value, onChange, options } = props;
 
   return (
     <Autocomplete
       multiple
       limitTags={5}
       freeSolo
-      {...field}
       value={[]}
-      // onChange={(event, newValue) => {
-      //   setVisitorTeam([...newValue]);
-      // }}
-      onChange={(_event, data) => field.onChange(data['label'] ?? '')}
+      onChange={onChange}
       options={options.map((option) => option["label"])}
       renderTags={(value: readonly string[], getTagProps) =>
         value.map((option: string, index: number) => (
