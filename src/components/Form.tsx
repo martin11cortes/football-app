@@ -102,7 +102,7 @@ function Form() {
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyDU7KiHIb3cGFNJdT3KXE4CruKDcBR2-Ps",
+    googleMapsApiKey: "YOUR_API_KEY",
     libraries,
   });
 
