@@ -1,54 +1,87 @@
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-import axios from 'axios';
-import { format, parseISO } from 'date-fns';
-import React from 'react';
+import {
+  List,
+  ListItemText,
+  Typography,
+  Divider,
+  Grid,
+  ListItemButton,
+} from "@mui/material";
+import axios from "axios";
+import { format, parseISO } from "date-fns";
+import React, { useState } from "react";
+import Map from "./Map";
 
-interface IMatch {
+export interface IMatch {
   id: string;
   when: string;
   where: string;
   matchType: string;
-  localTeam: [];
-  visitorTeam: [];
+  geolocation: {
+    lat: number;
+    lng: number;
+  };
 }
 
 const Matches = () => {
-  const [matches, setMatches] = React.useState([]);
+  const [matches, setMatches] = useState([]);
+  const [selectedMatch, setSelectedMatch] = useState<IMatch>(null);
+
   React.useEffect(() => {
-    axios.get<IMatch[]>("https://3jgliispfg.execute-api.us-east-1.amazonaws.com/dev/matches")
-      .then(res => {
+    axios
+      .get<IMatch[]>(
+        "https://3jgliispfg.execute-api.us-east-1.amazonaws.com/dev/matches"
+      )
+      .then((res) => {
         setMatches(res.data["Items"]);
       });
   }, []);
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">Name</TableCell>
-            <TableCell align="center">When</TableCell>
-            <TableCell align="center">Where</TableCell>
-            <TableCell align="center">Match Type</TableCell>
-            <TableCell align="center">Local Team</TableCell>
-            <TableCell align="center">Visitor Team</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {matches.map((match, i) => (
-            <TableRow key={i}>
-              <TableCell align="center">{match.name}</TableCell>
-              <TableCell align="center">{format(parseISO(match.when), 'MM/dd/yyyy HH:mm')}</TableCell>
-              <TableCell align="center">{match.where}</TableCell>
-              <TableCell align="center">{match.matchType}</TableCell>
-              <TableCell align="center">{match.localTeam.length}</TableCell>
-              <TableCell align="center">{match.visitorTeam.length}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <h1>Partidos</h1>
+      <Grid container>
+        <Grid item xs={4}>
+          <List sx={{ width: "100%", bgcolor: "whitesmoke" }} component="nav">
+            {matches.map((match: IMatch, i: number) => (
+              <React.Fragment key={i}>
+                <ListItemButton
+                  key={`list-item-${i}`}
+                  alignItems="flex-start"
+                  onClick={() => setSelectedMatch(match)}
+                >
+                  <ListItemText
+                    primary={match.where}
+                    secondary={
+                      <>
+                        <Typography
+                          key={`typography-${i}`}
+                          sx={{ display: "inline" }}
+                          component="span"
+                          variant="body2"
+                          color="text.primary"
+                        >
+                          {format(parseISO(match.when), "MM/dd/yyyy HH:mm")}
+                        </Typography>
+                        {" — " + match.matchType}
+                      </>
+                    }
+                  />
+                </ListItemButton>
+                {i < matches.length - 1 && <Divider key={`divider-${i}`} />}
+              </React.Fragment>
+            ))}
+          </List>
+        </Grid>
+        <Grid item xs={8}>
+          <Map
+            matches={matches}
+            selectedMatch={selectedMatch}
+            setSelectedMatch={setSelectedMatch}
+          />
+        </Grid>
+      </Grid>
+    </>
   );
-}
+};
 
 export default Matches;
